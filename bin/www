@@ -22,13 +22,25 @@ var server = app.listen(app.get('port'), function() {
   debug('Express server listening on port ' + server.address().port);
 });
 
-// Setup socket server
-// Reference: http://stackoverflow.com/questions/17696801/express-js-app-listen-vs-server-listen
-var socketio  = require('socket.io');
+///var io = require('../io');
+//Setup socket server
+//Reference: http://stackoverflow.com/questions/17696801/express-js-app-listen-vs-server-listen
+//var socketio  = require('socket.io');
 var io        = require('socket.io').listen(server);
 var client_count = 0;
-// on connection
-io.sockets.on('connection', function (socket) {
+//on connection
+io.on('connection', function (socket) {
 	client_count++;
 	console.log("hello!" + client_count);
+	
+	
+	socket.on('my other event', function(data){
+		console.log("my other event!" + data);
+	});
+	
+	// someone disconnect
+	socket.on('disconnect', function () {
+		console.log("goodbye!" +	 client_count);
+		client_count--;
+	});
 });

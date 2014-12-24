@@ -8,3 +8,4 @@ html
     block content
     script(type="text/javascript").
       var socket = io();
+      socket.emit('my other event', { my: 'data' });
