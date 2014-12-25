@@ -5,6 +5,13 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(src="/socket.io/socket.io.js")
   body
+    ul
+      li
+        a(href="/") Home
+      li
+        a(href="/register") Register
+      li
+        a(href="/login") Login
     block content
     script(type="text/javascript").
       var socket = io();
