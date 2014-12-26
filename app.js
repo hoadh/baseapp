@@ -5,6 +5,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var db = require('./database/db'); // load db connection
+
 var app = express();
 
 app.set('env', 'development');
@@ -29,13 +31,18 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // router setup
-//code code: var routerDirectory = __dirname + '/routes/';
-//	app.use('/', 			    require(routerDirectory + 'index'));
-//olde code: app.use('/users', 		require('./routes/index'));
+//
+//old code:
+//var routerDirectory = __dirname + '/routes/';
+//app.use('/', 			    require(routerDirectory + 'index'));
+//
+//old code: app.use('/users', 		require('./routes/index'));
+
 var require_router = function (router) {
 	var routerDirectory = __dirname + '/routes/';
 	return require(routerDirectory + router);
 };
+
 app.use('/', 			require_router('index'));
 app.use('/users', 		require_router('users'));
 app.use('/login', 		require_router('login'));
@@ -71,6 +78,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
 
 module.exports = app;
