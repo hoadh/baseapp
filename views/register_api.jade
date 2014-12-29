@@ -1,0 +1,45 @@
+extends layout
+
+block content
+	h1=title
+	p Please input
+	form(action='/register',method='post')
+		p Username
+		input#name(type="text",name="name")
+		br
+		p Email
+		input#email(type="text",name="email")
+		br
+		p Password
+		input#password(type="password",name="password")
+		br
+		p Password Again
+		input(type="password",name="passwordagain")
+		br
+		input#send_register(type='submit',value='Sign Up')
+	script(type="text/javascript").
+		jQuery("#send_register").on('click', function() {
+			var name = $("#name").val();
+			var email = $("#email").val();
+			var password = $("#password").val();
+			var sendInfo = {
+				name: name,
+				email: email,
+				password: password
+			};
+			$.ajax({
+				type: "POST",
+				url: "http://127.0.0.1:3000/api/1.0/users",
+				
+				dataType: "json",
+				data: sendInfo,
+				success: function (data) {
+					if (data) {
+						alert(data.message);
+					} else {
+						alert("Cannot register !");
+					}
+				}
+			});
+			return false;
+		});

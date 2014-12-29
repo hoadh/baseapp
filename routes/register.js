@@ -5,6 +5,11 @@ router.get('/', function(req,res) {
 	res.render('register', {title : 'Register'});
 });
 
+router.get('/viaapi', function(req,res) {
+	res.render('register_api', {title : 'Register'});
+});
+
+/*
 router.post('/', function(req,res) {
 	var body = req.body;
 	
@@ -36,7 +41,6 @@ router.post('/', function(req,res) {
 					});
 				}
 				
-				// res.send('Registered email: '+body.email);
 				res.status(201).json({
 					'message': 'Successfully created new user'
 				});
@@ -51,5 +55,5 @@ router.post('/', function(req,res) {
 	});
 	
 });
-
+*/
 module.exports = router;
