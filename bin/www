@@ -14,9 +14,10 @@ var io        = require('socket.io').listen(server);
 var client_count = 0;
 //on connection
 io.on('connection', function (socket) {
+	/*
+	// temp code - run ok
 	client_count++;
 	console.log("hello!" + client_count);
-	
 	
 	socket.on('my other event', function(data){
 		console.log("my other event!" + data);
@@ -27,4 +28,5 @@ io.on('connection', function (socket) {
 		console.log("goodbye!" +	 client_count);
 		client_count--;
 	});
+	*/
 });

@@ -18,35 +18,41 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 
-// setup the logger
+// [begin] setup the logger
 // Reference: https://github.com/expressjs/morgan#short
 var fs = require('fs');
 var accessLogStream = fs.createWriteStream(__dirname + '/logs/access.log', {flags: 'a'});
 //app.use(logger('dev'));
 app.use(logger('combined', {stream: accessLogStream}));
+// [end] setup the logger
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// router setup
-//
-//old code:
-//var routerDirectory = __dirname + '/routes/';
-//app.use('/', 			    require(routerDirectory + 'index'));
-//
-//old code: app.use('/users', 		require('./routes/index'));
+// CORS header
+// ref: http://thejackalofjavascript.com/architecting-a-restful-node-js-app/
+app.all('/*', function(req, res, next) {
+	// CORS headers
+	res.header("Access-Control-Allow-Origin", "*"); // restrict it to the required domain
+	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+	// Set custom headers for CORS
+	res.header('Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key');
+	if (req.method == 'OPTIONS') {
+		res.status(200).end();
+	} else {
+		next();
+	}
+});
+//Auth Middleware - This will check if the token is valid
+//Only the requests that start with /api/v1/* will be checked for the token.
+//Any URL's that do not follow the below pattern should be avoided unless you 
+//are sure that authentication is not needed
+app.all('/api/v1/*', [require('./middlewares/validateRequest')]);
 
-var require_router = function (router) {
-	var routerDirectory = __dirname + '/routes/';
-	return require(routerDirectory + router);
-};
-
-app.use('/', 			require_router('index'));
-app.use('/users', 		require_router('users'));
-app.use('/login', 		require_router('login'));
-app.use('/register', 	require_router('register'));
+//Routers
+app.use('/', require('./routes'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -60,6 +66,13 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
+	app.use('/api', function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.json({
+        	message: err.message,
+            error: err
+		});
+    });
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {
@@ -71,6 +84,14 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
+
+app.use('/api', function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.json({
+    	message: err.message,
+    	error: {}
+	});
+});
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
