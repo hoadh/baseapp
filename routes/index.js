@@ -1,17 +1,15 @@
 var express = require('express');
-var router = express.Router();
+var router  = express.Router();
+var users	= require('./business_logic/users.js');
+var auth	= require('./business_logic/auth.js');
+var nodes	= require('./business_logic/nodes.js');
 
-var users = require('./business_logic/users.js');
-var auth = require('./business_logic/auth.js');
-
-/* GET home page. */
-router.get('/', function(req, res) {
-  res.render('index', { title: 'Express' });
-});
-
-router.get('/version', function(req,res) {
+// api.v1
+router.post	('/login', auth.login);
+router.post	('/api/v1/nodes/', 		node.create_new	);
+router.get	('/api/v1/version', function(req,res) {
 	res.status(200).json({
-		'version': '0.1'
+		'version': '1.0'
 	});
 });
 
@@ -22,13 +20,14 @@ function return_invalid_action(req,res) {
 	res.status(200).json({'message': 'Invalid action'});
 };
 
-router.post('/login', auth.login);
+/* router for test api */
+router.get	('/api/v1/api_test', 	users.get_all	);
+router.post	('/api/v1/api_test', 	users.create_new);
 
-/* api_test router */
-router.get	('/api/v1/api_test', users.get_all	);
-router.post	('/api/v1/api_test', users.create_new	);
-
-/* GET view for client. */
+/* GET view for client */
+router.get('/', function(req, res) {
+  res.render('index', { title: 'Baseapp' });
+});
 router.get('/test_api', function(req, res) {
 	res.render('test', {title : 'Test'});
 });
